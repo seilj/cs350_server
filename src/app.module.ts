@@ -1,10 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { SensorModule } from './sensor/sensor.module';
+import { UserModule } from './user/user.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
+const DbHost = 'localhost';
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    SensorModule,
+    UserModule,
+    MongooseModule.forRoot(`mongodb://${DbHost}/scp`, {
+      connectionName: 'scp',
+    }),
+  ],
 })
 export class AppModule {}
