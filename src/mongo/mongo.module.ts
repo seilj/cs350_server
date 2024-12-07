@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   Restaurant,
@@ -10,29 +10,20 @@ import {
   RestaurantData,
   RestaurantDataSchema,
 } from './schemas/restaurant.data.schema';
-import { mongoService } from './mongo.service';
-import { mongoRepository } from './mongo.repository';
+import { MongoService } from './mongo.service';
+import { MongoRepository } from './mongo.repository';
 
+@Global()
 @Module({
   imports: [
-    MongooseModule.forFeature(
-      [{ name: Restaurant.name, schema: RestaurantSchema }],
-      'restaurant',
-    ),
-    MongooseModule.forFeature(
-      [{ name: Sensor.name, schema: SensorSchema }],
-      'sensor',
-    ),
-    MongooseModule.forFeature(
-      [{ name: SensorData.name, schema: SensorDataSchema }],
-      'sensorData',
-    ),
-    MongooseModule.forFeature(
-      [{ name: RestaurantData.name, schema: RestaurantDataSchema }],
-      'restaurantData',
-    ),
+    MongooseModule.forFeature([
+      { name: Restaurant.name, schema: RestaurantSchema },
+      { name: Sensor.name, schema: SensorSchema },
+      { name: SensorData.name, schema: SensorDataSchema },
+      { name: RestaurantData.name, schema: RestaurantDataSchema },
+    ]),
   ],
-  exports: [mongoService],
-  providers: [mongoService, mongoRepository],
+  exports: [MongoService, MongoRepository],
+  providers: [MongoService, MongoRepository],
 })
 export class MongoModule {}

@@ -23,7 +23,7 @@ export class Sensor {
     required: true,
     enum: [SensorType.Door, SensorType.Line, SensorType.Seat],
   })
-  sensorType: string;
+  sensorType: SensorType;
 
   @Prop({ required: false })
   available?: boolean;

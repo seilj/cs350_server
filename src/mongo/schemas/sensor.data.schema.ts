@@ -11,11 +11,18 @@ export class SensorData {
   })
   sensorId: string;
 
+  @Prop({
+    type: String,
+    required: true,
+  })
+  restaurantId: string;
+
   @Prop({ type: Number, default: Date.now() })
   createdAt: number;
 
-  //   @Prop()
-  //   data: string;
+  // TODO: 프론트랑 논의 필요할듯
+  @Prop({ type: String, default: JSON.stringify({}) })
+  data: string;
 }
 
 export const SensorDataSchema = SchemaFactory.createForClass(SensorData);

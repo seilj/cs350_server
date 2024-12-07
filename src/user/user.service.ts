@@ -3,9 +3,12 @@ import { RestaurantStatusDTO } from './dto/restaurant-status.dto';
 import { Congestion } from 'src/common/types';
 import { RestaurantListDTO } from './dto/restaurant-list.dto';
 import { RestaurantDTO } from './dto/restaurant.dto';
+import { MongoService } from 'src/mongo/mongo.service';
 
 @Injectable()
 export class UserService {
+  constructor(private db: MongoService) {}
+
   getRestaurantList(): RestaurantListDTO {
     const restaurantList: RestaurantDTO[] = [
       {
@@ -35,9 +38,10 @@ export class UserService {
   getRestaurantStatus({
     restaurantId,
   }: {
-    restaurantId: number;
+    restaurantId: string;
   }): RestaurantStatusDTO {
-    // this.db.getStatus(restaurantId) ~~~
+    // TODO
+    // return this.db.getRestaurantStatusData(restaurantId);
     console.log(restaurantId);
     return {
       congestion: Congestion.High, // enum으로 관리 필요

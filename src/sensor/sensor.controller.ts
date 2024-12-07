@@ -1,7 +1,7 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { SensorService } from './sensor.service';
 
-@Controller()
+@Controller('/sensor')
 export class SensorController {
   constructor(private service: SensorService) {}
 
@@ -10,8 +10,9 @@ export class SensorController {
     return this.service.getServerTime();
   }
 
-  @Post('/data')
-  async saveSensorData() {
-    return this.service.saveData();
+  @Get('/data')
+  //TODO: Query로 받아온다고 했으니 get
+  async saveSensorData(@Query('id') sensorId) {
+    return this.service.saveData({ sensorId });
   }
 }
