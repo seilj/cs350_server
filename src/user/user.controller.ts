@@ -8,7 +8,7 @@ export class UserController {
   constructor(private service: UserService) {}
 
   @Get('/restaurants')
-  getRestaurants(): RestaurantListDTO {
+  async getRestaurants(): Promise<RestaurantListDTO> {
     return this.service.getRestaurantList();
   }
 

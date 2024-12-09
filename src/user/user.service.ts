@@ -9,29 +9,30 @@ import { MongoService } from 'src/mongo/mongo.service';
 export class UserService {
   constructor(private db: MongoService) {}
 
-  getRestaurantList(): RestaurantListDTO {
-    const restaurantList: RestaurantDTO[] = [
-      {
-        restaurantId: 'N11',
-        restaurantName: '카이마루',
-      },
-      {
-        restaurantId: 'E16',
-        restaurantName: '서브웨이',
-      },
-      {
-        restaurantId: 'E5',
-        restaurantName: '동맛골',
-      },
-      {
-        restaurantId: 'W2',
-        restaurantName: '서맛골',
-      },
-      {
-        restaurantId: 'N6',
-        restaurantName: '교수회관',
-      },
-    ];
+  async getRestaurantList(): Promise<RestaurantListDTO> {
+    const restaurantList: RestaurantDTO[] =
+      (await this.db.getRestaurantList()) || [
+        {
+          restaurantId: 'N11',
+          restaurantName: '카이마루',
+        },
+        {
+          restaurantId: 'E16',
+          restaurantName: '서브웨이',
+        },
+        {
+          restaurantId: 'E5',
+          restaurantName: '동맛골',
+        },
+        {
+          restaurantId: 'W2',
+          restaurantName: '서맛골',
+        },
+        {
+          restaurantId: 'N6',
+          restaurantName: '교수회관',
+        },
+      ];
     return { restaurantList };
   }
 

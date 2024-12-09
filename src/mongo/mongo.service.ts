@@ -3,11 +3,22 @@ import { MongoRepository } from './mongo.repository';
 import { Congestion, SensorType } from 'src/common/types';
 import { RestaurantStatusDTO } from 'src/user/dto/restaurant-status.dto';
 import { SensorData } from './schemas/sensor.data.schema';
+import { Restaurant } from './schemas/restaurant.schema';
+import { RestaurantDTO } from 'src/user/dto/restaurant.dto';
 
 //db로부터 받아온 데이터를 가공하는 로직
 @Injectable()
 export class MongoService {
   constructor(private repo: MongoRepository) {}
+
+  async getRestaurantList(): Promise<RestaurantDTO[]> {
+    return this.repo.getAllRestaurants().then((items: Restaurant[]) =>
+      items.map(({ restaurantId, name }) => ({
+        restaurantId,
+        restaurantName: name,
+      })),
+    );
+  }
 
   async saveSensorData(data: Partial<SensorData>) {
     // if (!(await this.repo.getSensor(sensorId))) {
