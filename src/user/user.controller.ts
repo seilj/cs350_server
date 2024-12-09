@@ -1,14 +1,14 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RestaurantListDTO } from './dto/restaurant-list.dto';
 import { RestaurantStatusDTO } from './dto/restaurant-status.dto';
+import { RestaurantDTO } from './dto/restaurant.dto';
 
 @Controller('/user')
 export class UserController {
   constructor(private service: UserService) {}
 
   @Get('/restaurants')
-  async getRestaurants(): Promise<RestaurantListDTO> {
+  async getRestaurants(): Promise<RestaurantDTO[]> {
     return this.service.getRestaurantList();
   }
 

@@ -9,7 +9,7 @@ import { MongoService } from 'src/mongo/mongo.service';
 export class UserService {
   constructor(private db: MongoService) {}
 
-  async getRestaurantList(): Promise<RestaurantListDTO> {
+  async getRestaurantList(): Promise<RestaurantDTO[]> {
     const restaurantList: RestaurantDTO[] =
       (await this.db.getRestaurantList()) || [
         {
@@ -33,7 +33,7 @@ export class UserService {
           restaurantName: '교수회관',
         },
       ];
-    return { restaurantList };
+    return restaurantList;
   }
 
   getRestaurantStatus({
