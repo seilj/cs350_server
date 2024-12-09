@@ -11,12 +11,14 @@ import { RestaurantDTO } from 'src/user/dto/restaurant.dto';
 export class MongoService {
   constructor(private repo: MongoRepository) {}
 
-  async getRestaurantList(): Promise<RestaurantDTO[]> {
+  async getRestaurantList(getAll = true): Promise<RestaurantDTO[]> {
     return this.repo.getAllRestaurants().then((items: Restaurant[]) =>
-      items.map(({ restaurantId, name }) => ({
-        restaurantId,
-        restaurantName: name,
-      })),
+      items
+        .filter(({ available }) => getAll || available)
+        .map(({ restaurantId, name }) => ({
+          restaurantId,
+          restaurantName: name,
+        })),
     );
   }
 
