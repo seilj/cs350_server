@@ -5,6 +5,8 @@
 `swagger: http://localhost:${port}/api`; // api swagger
 ```
 
+[Hot reload](https://docs.nestjs.com/recipes/hot-reload) 적용할 수 있으면 좋을듯
+
 ## Project setup
 
 ```bash
