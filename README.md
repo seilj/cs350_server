@@ -1,5 +1,9 @@
 ## Description
 
+```bash
+$ docker run --name mongodb -d -p 27017:27017 mongo:6.0
+```
+
 ```js
 `server: http://localhost:${port}`; // 로컬 서버 baseUrl
 `swagger: http://localhost:${port}/api`; // api swagger
