@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RestaurantStatusDTO } from './dto/restaurant-status.dto';
 import { Congestion } from 'src/common/types';
-import { RestaurantListDTO } from './dto/restaurant-list.dto';
 import { RestaurantDTO } from './dto/restaurant.dto';
 import { MongoService } from 'src/mongo/mongo.service';
 
