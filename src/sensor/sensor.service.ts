@@ -8,7 +8,7 @@ export class SensorService {
     return Date.now();
   }
 
-  async saveData(data) {
+  async saveData(data: {sensorId: string; sensorValue: number}) {
     return this.db.saveSensorData(data);
   }
 }

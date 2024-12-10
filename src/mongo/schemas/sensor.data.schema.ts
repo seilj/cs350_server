@@ -20,9 +20,8 @@ export class SensorData {
   @Prop({ type: Number, default: Date.now() })
   createdAt: number;
 
-  // TODO: 프론트랑 논의 필요할듯
-  @Prop({ type: String, default: JSON.stringify({}) })
-  data: string;
+  @Prop({ type: Number, required: true })
+  data: number;
 }
 
 export const SensorDataSchema = SchemaFactory.createForClass(SensorData);

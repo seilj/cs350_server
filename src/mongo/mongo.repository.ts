@@ -76,6 +76,11 @@ export class MongoRepository {
     return await newRestaurant.save();
   }
 
+  //Get restaurant by Id
+  async getRestaurant(restaurantId: string): Promise<Restaurant>{
+    return await this.restaurantModel.findOne({restaurantId}).exec();
+  }
+
   // Get all restaurants
   async getAllRestaurants(): Promise<Restaurant[]> {
     return await this.restaurantModel.find().exec();

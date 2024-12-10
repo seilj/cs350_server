@@ -22,16 +22,33 @@ export class MongoService {
     );
   }
 
-  async saveSensorData(data: Partial<SensorData>) {
-    // if (!(await this.repo.getSensor(sensorId))) {
-    //   throw new Error('No sensor');
-    // }
-    await this.repo.addSensorData(data);
+  async saveSensorData(data: {sensorId: string; sensorValue: number}) {
+    const sensor = await this.repo.getSensor(data.sensorId);
+    if(!sensor){
+      throw new Error('No Sensor with ID: ${data.sensorId}');
+    }
+
+    const sensorData = {
+      sensorId: data.sensorId,
+      restaurantId: sensor.restaurantId,
+      createdAt: Date.now(),
+      data: data.sensorValue,
+    };
+
+    await this.repo.addSensorData(sensorData);
   }
 
   async getRestaurantStatusData(
     restaurantId: string,
   ): Promise<RestaurantStatusDTO> {
+
+    const restaurant = await this.repo.getRestaurant(restaurantId);
+    if(!restaurant){
+      throw new Error('No restaurant with ID: ${restaurantId}');
+    }
+
+    const seats = restaurant.seats;
+
     const isCache = false;
     if (isCache) {
       return {
@@ -41,12 +58,21 @@ export class MongoService {
       };
     }
     const sensors = await this.repo.getRestaurantSensors(restaurantId);
+    console.log(sensors)
     const sensorDataList = await Promise.all(
-      sensors.map((sensor) =>
-        this.repo
-          .getRecentSensorData(sensor.sensorId)
-          .then((data) => ({ ...data, sensorType: sensor.sensorType })),
-      ),
+      sensors.map(async (sensor) => {
+        const data = await this.repo.getRecentSensorData(sensor.sensorId);
+        if (!data) {
+          return { sensorType: sensor.sensorType, data: null }; // 데이터가 없을 경우 처리
+        }
+        // 필요한 데이터만 추출
+        return {
+          sensorId: data.sensorId,
+          data: data.data,
+          createdAt: data.createdAt,
+          sensorType: sensor.sensorType,
+        };
+      }),
     );
     const dataList = sensorDataList.reduce(
       (prev, { sensorType, ...data }) => {
@@ -63,10 +89,29 @@ export class MongoService {
     console.log(dataList);
     // TODO: dataList 가공해서 아래 데이터
     // save cache
+
+    const emptyCount = dataList[SensorType.Seat].reduce(
+      (sum, sensorData) => sum + sensorData.data,
+      0,
+    );
+    const lineData = dataList[SensorType.Door][0]?.data || 0;
+    const doorData = dataList[SensorType.Door][0]?.data || 0;
+    const waitingTime = 5*lineData + doorData;
+    let congestion: Congestion;
+
+    if(emptyCount/seats > 0.5){
+      congestion = Congestion.Low;
+    } else if(emptyCount/seats > 0.2){
+      congestion = Congestion.Normal;
+    } else{
+      congestion = Congestion.High;
+    }
+
+
     return {
-      congestion: Congestion.High, // enum으로 관리 필요
-      waitingTime: 60, // second
-      emptyCount: 3,
+      congestion: congestion, // enum으로 관리 필요
+      waitingTime: waitingTime, // second
+      emptyCount: emptyCount,
     };
   }
 }

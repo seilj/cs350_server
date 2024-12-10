@@ -24,7 +24,7 @@ export class UserController {
   })
   getRestaurantStatus(
     @Query('restaurant_id') restaurantId: string,
-  ): RestaurantStatusDTO {
+  ): Promise<RestaurantStatusDTO> {
     return this.service.getRestaurantStatus({ restaurantId });
   }
 }

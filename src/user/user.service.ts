@@ -40,14 +40,10 @@ export class UserService {
     restaurantId,
   }: {
     restaurantId: string;
-  }): RestaurantStatusDTO {
+  }): Promise<RestaurantStatusDTO> {
     // TODO
     // return this.db.getRestaurantStatusData(restaurantId);
     console.log(restaurantId);
-    return {
-      congestion: Congestion.High, // enum으로 관리 필요
-      waitingTime: 60, // second
-      emptyCount: 3,
-    };
+    return this.db.getRestaurantStatusData(restaurantId);
   }
 }

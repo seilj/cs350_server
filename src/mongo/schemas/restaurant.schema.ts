@@ -11,6 +11,9 @@ export class Restaurant {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ default: 4 })
+  seats: number;
+
   @Prop({ default: true })
   available: boolean;
 }
