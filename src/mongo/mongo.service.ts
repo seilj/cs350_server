@@ -6,9 +6,20 @@ import { SensorData } from './schemas/sensor.data.schema';
 import { Restaurant } from './schemas/restaurant.schema';
 import { RestaurantDTO } from 'src/user/dto/restaurant.dto';
 
+interface CacheData {
+  congestion: Congestion;
+  waitingTime: number;
+  emptyCount: number;
+  timestamp: number; // 캐시 갱신 시간
+}
+
 //db로부터 받아온 데이터를 가공하는 로직
 @Injectable()
 export class MongoService {
+
+  private cache: Record<string, CacheData> = {}; // 레스토랑 ID를 키로 하는 캐시 객체
+  private readonly CACHE_TTL = 10 * 1000; // 캐시 TTL (예: 10초)
+
   constructor(private repo: MongoRepository) {}
 
   async getRestaurantList(getAll = true): Promise<RestaurantDTO[]> {
@@ -47,16 +58,19 @@ export class MongoService {
       throw new Error('No restaurant with ID: ${restaurantId}');
     }
 
-    const seats = restaurant.seats;
-
-    const isCache = false;
-    if (isCache) {
+    // 캐시 확인
+    const cache = this.cache[restaurantId];
+    if (cache && Date.now() - cache.timestamp < this.CACHE_TTL) {
+      // 캐시가 유효하면 바로 반환
       return {
-        congestion: Congestion.High, // enum으로 관리 필요
-        waitingTime: 60, // second
-        emptyCount: 3,
+        congestion: cache.congestion,
+        waitingTime: cache.waitingTime,
+        emptyCount: cache.emptyCount,
       };
     }
+
+    const seats = restaurant.seats;
+
     const sensors = await this.repo.getRestaurantSensors(restaurantId);
     console.log(sensors)
     const sensorDataList = await Promise.all(
@@ -96,7 +110,7 @@ export class MongoService {
     );
     const lineData = dataList[SensorType.Door][0]?.data || 0;
     const doorData = dataList[SensorType.Door][0]?.data || 0;
-    const waitingTime = 5*lineData + doorData;
+    const waitingTime = 5 + 2*lineData + doorData;
     let congestion: Congestion;
 
     if(emptyCount/seats > 0.5){
@@ -106,6 +120,14 @@ export class MongoService {
     } else{
       congestion = Congestion.High;
     }
+
+    // 캐시 갱신
+    this.cache[restaurantId] = {
+      congestion,
+      waitingTime,
+      emptyCount,
+      timestamp: Date.now(), // 캐시 갱신 시점 기록
+    };
 
 
     return {
