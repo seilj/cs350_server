@@ -8,6 +8,7 @@ import { RestaurantDTO } from 'src/user/dto/restaurant.dto';
 
 interface CacheData {
   congestion: Congestion;
+  lineLength: number;
   waitingTime: number;
   emptyCount: number;
   timestamp: number; // 캐시 갱신 시간
@@ -64,6 +65,7 @@ export class MongoService {
       // 캐시가 유효하면 바로 반환
       return {
         congestion: cache.congestion,
+        lineLength: cache.lineLength,
         waitingTime: cache.waitingTime,
         emptyCount: cache.emptyCount,
       };
@@ -124,6 +126,7 @@ export class MongoService {
     // 캐시 갱신
     this.cache[restaurantId] = {
       congestion,
+      lineLength: lineData,
       waitingTime,
       emptyCount,
       timestamp: Date.now(), // 캐시 갱신 시점 기록
@@ -132,6 +135,7 @@ export class MongoService {
 
     return {
       congestion: congestion, // enum으로 관리 필요
+      lineLength: lineData,
       waitingTime: waitingTime, // second
       emptyCount: emptyCount,
     };

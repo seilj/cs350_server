@@ -9,6 +9,11 @@ export class RestaurantStatusDTO {
   })
   congestion: Congestion;
   @ApiProperty({
+    description: '줄길이',
+    example: 3,
+  })
+  lineLength: number;
+  @ApiProperty({
     description: '예상 대기시간(단위: second)',
     example: 60,
   })
