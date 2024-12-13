@@ -16,6 +16,9 @@ export class SensorController {
     @Query('id') sensorId: string,
     @Query('value') sensorValue: number,
   ) {
-    return this.service.saveData({ sensorId, sensorValue });
+    return this.service.saveData({
+      sensorId,
+      sensorValue: Number(sensorValue),
+    });
   }
 }
