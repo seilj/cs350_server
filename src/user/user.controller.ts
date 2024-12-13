@@ -22,7 +22,7 @@ export class UserController {
     description: 'Restaurant ID',
     example: 'N11',
   })
-  getRestaurantStatus(
+  async getRestaurantStatus(
     @Query('restaurant_id') restaurantId: string,
   ): Promise<RestaurantStatusDTO> {
     return this.service.getRestaurantStatus({ restaurantId });

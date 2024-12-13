@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { MongoRepository } from './mongo.repository';
 import { Congestion, SensorType } from 'src/common/types';
 import { RestaurantStatusDTO } from 'src/user/dto/restaurant-status.dto';
-import { SensorData } from './schemas/sensor.data.schema';
 import { Restaurant } from './schemas/restaurant.schema';
 import { RestaurantDTO } from 'src/user/dto/restaurant.dto';
 
@@ -16,7 +15,6 @@ interface CacheData {
 //db로부터 받아온 데이터를 가공하는 로직
 @Injectable()
 export class MongoService {
-
   private cache: Record<string, CacheData> = {}; // 레스토랑 ID를 키로 하는 캐시 객체
   private readonly CACHE_TTL = 10 * 1000; // 캐시 TTL (예: 10초)
 
@@ -33,10 +31,10 @@ export class MongoService {
     );
   }
 
-  async saveSensorData(data: {sensorId: string; sensorValue: number}) {
+  async saveSensorData(data: { sensorId: string; sensorValue: number }) {
     const sensor = await this.repo.getSensor(data.sensorId);
-    if(!sensor){
-      throw new Error('No Sensor with ID: ${data.sensorId}');
+    if (!sensor) {
+      throw new Error(`No Sensor with ID: ${data.sensorId}`);
     }
 
     const sensorData = {
@@ -52,10 +50,9 @@ export class MongoService {
   async getRestaurantStatusData(
     restaurantId: string,
   ): Promise<RestaurantStatusDTO> {
-
     const restaurant = await this.repo.getRestaurant(restaurantId);
-    if(!restaurant){
-      throw new Error('No restaurant with ID: ${restaurantId}');
+    if (!restaurant) {
+      throw new Error(`No restaurant with ID: ${restaurantId}`);
     }
 
     // 캐시 확인
@@ -72,7 +69,6 @@ export class MongoService {
     const seats = restaurant.seats;
 
     const sensors = await this.repo.getRestaurantSensors(restaurantId);
-    console.log(sensors)
     const sensorDataList = await Promise.all(
       sensors.map(async (sensor) => {
         const data = await this.repo.getRecentSensorData(sensor.sensorId);
@@ -100,24 +96,20 @@ export class MongoService {
       },
     );
 
-    console.log(dataList);
-    // TODO: dataList 가공해서 아래 데이터
-    // save cache
-
     const emptyCount = dataList[SensorType.Seat].reduce(
       (sum, sensorData) => sum + sensorData.data,
       0,
     );
     const lineData = dataList[SensorType.Door][0]?.data || 0;
     const doorData = dataList[SensorType.Door][0]?.data || 0;
-    const waitingTime = 5 + 2*lineData + doorData;
+    const waitingTime = 5 + 2 * lineData + doorData;
     let congestion: Congestion;
 
-    if(emptyCount/seats > 0.5){
+    if (emptyCount / seats > 0.5) {
       congestion = Congestion.Low;
-    } else if(emptyCount/seats > 0.2){
+    } else if (emptyCount / seats > 0.2) {
       congestion = Congestion.Normal;
-    } else{
+    } else {
       congestion = Congestion.High;
     }
 
@@ -128,7 +120,6 @@ export class MongoService {
       emptyCount,
       timestamp: Date.now(), // 캐시 갱신 시점 기록
     };
-
 
     return {
       congestion: congestion, // enum으로 관리 필요

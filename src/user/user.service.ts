@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { RestaurantStatusDTO } from './dto/restaurant-status.dto';
-import { Congestion } from 'src/common/types';
 import { RestaurantDTO } from './dto/restaurant.dto';
 import { MongoService } from 'src/mongo/mongo.service';
 
@@ -36,14 +35,11 @@ export class UserService {
     return restaurantList;
   }
 
-  getRestaurantStatus({
+  async getRestaurantStatus({
     restaurantId,
   }: {
     restaurantId: string;
   }): Promise<RestaurantStatusDTO> {
-    // TODO
-    // return this.db.getRestaurantStatusData(restaurantId);
-    console.log(restaurantId);
     return this.db.getRestaurantStatusData(restaurantId);
   }
 }

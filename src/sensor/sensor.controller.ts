@@ -12,7 +12,10 @@ export class SensorController {
 
   @Get('/data')
   //TODO: Query로 받아온다고 했으니 get
-  async saveSensorData(@Query('id') sensorId: string, @Query('value') sensorValue: number) {
+  async saveSensorData(
+    @Query('id') sensorId: string,
+    @Query('value') sensorValue: number,
+  ) {
     return this.service.saveData({ sensorId, sensorValue });
   }
 }

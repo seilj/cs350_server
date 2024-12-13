@@ -7,7 +7,7 @@ export class CreateRestaurantDto {
   @ApiProperty({ description: 'Restaurant name', example: 'KAIST Cafeteria' })
   name: string;
 
-  @ApiProperty({ description: 'Restaurant seats number', example:'4'})
+  @ApiProperty({ description: 'Restaurant seats number', example: 4 })
   seats: number;
 
   @ApiProperty({ description: 'Availability of the restaurant', example: true })
